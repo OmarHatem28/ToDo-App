@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Views/home.dart';
+import 'package:todo_app/Views/myTasks.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,6 +12,9 @@ class MyApp extends StatelessWidget {
       title: 'ToDo Task',
       theme: ThemeData.dark(),
       home: Home(),
+      routes: {
+        'myTasks': (context) => MyTasks(),
+      },
     );
   }
 }

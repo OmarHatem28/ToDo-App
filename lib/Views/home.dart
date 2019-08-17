@@ -75,6 +75,7 @@ class _HomeState extends State<Home> {
   Widget buildColor(Color color) {
     return InkWell(
       onTap: () {
+        Navigator.pushNamed(context, 'myTasks');
       },
       child: Container(
         margin: EdgeInsets.only(left: 8),
