@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/Views/addTask.dart';
 import 'package:todo_app/Views/home.dart';
 import 'package:todo_app/Views/myTasks.dart';
 
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
       home: Home(),
       routes: {
         'myTasks': (context) => MyTasks(),
+        'addTask': (context) => AddTask(),
       },
     );
   }

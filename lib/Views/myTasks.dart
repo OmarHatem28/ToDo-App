@@ -24,7 +24,7 @@ class _MyTasksState extends State<MyTasks> {
   @override
   Widget build(BuildContext context) {
     if (selected.length == 0) edit = false;
-    for (int i =0;i<tasks.length;i++) {
+    for (int i = 0; i < tasks.length; i++) {
       checked.add(false);
     }
     return Scaffold(
@@ -32,8 +32,7 @@ class _MyTasksState extends State<MyTasks> {
       body: ListView.builder(
         itemCount: tasks.length + 1,
         itemBuilder: (context, i) {
-          if ( i == tasks.length )
-            return buildAddTaskTile();
+          if (i == tasks.length) return buildAddTaskTile();
           return buildTaskTile(i);
         },
       ),
@@ -52,9 +51,12 @@ class _MyTasksState extends State<MyTasks> {
           style: TextStyle(color: Colors.black, fontSize: 18),
         ),
         trailing: edit
-            ? Icon(checked[i]
-                ? Icons.radio_button_checked
-                : Icons.radio_button_unchecked, color: Colors.black,)
+            ? Icon(
+                checked[i]
+                    ? Icons.radio_button_checked
+                    : Icons.radio_button_unchecked,
+                color: Colors.black,
+              )
             : null,
         onTap: () {
           if (edit) {
@@ -82,15 +84,26 @@ class _MyTasksState extends State<MyTasks> {
   }
 
   Widget buildAddTaskTile() {
-    return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white54),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Center(
-        child: Text("Add Task +", style: TextStyle(fontSize: 18),),
+    return Opacity(
+      opacity: edit ? 0.1 : 1,
+      child: Container(
+        margin: EdgeInsets.all(20),
+        child: InkWell(
+          onTap: edit ? null : () => Navigator.pushNamed(context, 'addTask'),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white54),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                "Add Task +",
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
