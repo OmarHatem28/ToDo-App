@@ -20,6 +20,7 @@ class _MyTasksState extends State<MyTasks> {
   List<bool> checked = new List();
 
   bool edit = false;
+  bool grid = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +28,57 @@ class _MyTasksState extends State<MyTasks> {
     for (int i = 0; i < tasks.length; i++) {
       checked.add(false);
     }
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView.builder(
+      appBar: PreferredSize(
+        preferredSize: Size(size.width, 60),
+        child: Container(
+          color: Colors.black,
+          height: 80,
+          padding: EdgeInsets.fromLTRB(15, 35, 15, 15),
+          child: Row(
+            children: <Widget>[
+              Text("My Tasks", style: TextStyle(fontSize: 16),),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(right: 15, top: 8),
+                child: Text("Sunday >"),
+              ),
+              IconButton(
+                icon: Icon(grid ? Icons.view_list : Icons.grid_on),
+                onPressed: () {
+                  setState(() {
+                    grid = !grid;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      body: grid ? buildGridTasks() : buildLinearTasks(),
+    );
+  }
+
+  Widget buildLinearTasks() {
+    return ListView.builder(
+      itemCount: tasks.length + 1,
+      itemBuilder: (context, i) {
+        if (i == tasks.length) return buildAddTaskTile();
+        return buildTaskTile(i);
+      },
+    );
+  }
+
+  Widget buildGridTasks() {
+    return GridView.builder(
+        gridDelegate:
+            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
         itemCount: tasks.length + 1,
         itemBuilder: (context, i) {
-          if (i == tasks.length) return buildAddTaskTile();
-          return buildTaskTile(i);
-        },
-      ),
-    );
+          if (i == tasks.length) return buildAddTaskGrid();
+          return buildTaskGrid(i);
+        });
   }
 
   Widget buildTaskTile(int i) {
@@ -59,25 +101,10 @@ class _MyTasksState extends State<MyTasks> {
               )
             : null,
         onTap: () {
-          if (edit) {
-            setState(() {
-              checked[i] = !checked[i];
-              if (checked[i])
-                selected.add(tasks[i]);
-              else
-                selected.remove(tasks[i]);
-            });
-          }
+          onTap(i);
         },
         onLongPress: () {
-          setState(() {
-            edit = true;
-            checked[i] = !checked[i];
-            if (checked[i])
-              selected.add(tasks[i]);
-            else
-              selected.remove(tasks[i]);
-          });
+          onLongPress(i);
         },
       ),
     );
@@ -106,5 +133,84 @@ class _MyTasksState extends State<MyTasks> {
         ),
       ),
     );
+  }
+
+  Widget buildTaskGrid(int i) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        color: Colors.white54,
+        child: ListTile(
+          onTap: () => onTap(i),
+          onLongPress: () => onLongPress(i),
+          title: Center(
+            child: Text(
+              tasks[i].name,
+              style: TextStyle(color: Colors.black, fontSize: 18),
+            ),
+          ),
+          trailing: edit
+              ? Icon(
+            checked[i]
+                ? Icons.radio_button_checked
+                : Icons.radio_button_unchecked,
+            color: Colors.black,
+          )
+              : null,
+        ),
+        elevation: 4,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+    );
+  }
+
+  Widget buildAddTaskGrid() {
+    return Opacity(
+      opacity: edit ? 0.1 : 1,
+      child: Container(
+        padding: EdgeInsets.all(12),
+        child: InkWell(
+          onTap: edit ? null : () => Navigator.pushNamed(context, 'addTask'),
+          child: Container(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Add Task +",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.white54),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void onTap(int i) {
+    if (edit) {
+      setState(() {
+        checked[i] = !checked[i];
+        if (checked[i])
+          selected.add(tasks[i]);
+        else
+          selected.remove(tasks[i]);
+      });
+    }
+  }
+
+  void onLongPress(int i) {
+    setState(() {
+      edit = true;
+      checked[i] = !checked[i];
+      if (checked[i])
+        selected.add(tasks[i]);
+      else
+        selected.remove(tasks[i]);
+    });
   }
 }
