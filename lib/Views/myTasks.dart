@@ -38,13 +38,32 @@ class _MyTasksState extends State<MyTasks> {
           padding: EdgeInsets.fromLTRB(15, 35, 15, 15),
           child: Row(
             children: <Widget>[
-              Text("My Tasks", style: TextStyle(fontSize: 16),),
+              InkWell(
+                child: Text(
+                  "My Tasks",
+                  style: TextStyle(fontSize: 16),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
               Spacer(),
               Padding(
                 padding: const EdgeInsets.only(right: 15, top: 8),
                 child: Text("Sunday >"),
               ),
-              IconButton(
+              edit ? IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    edit = false;
+                    selected.clear();
+                    for (int i = 0; i < tasks.length; i++) {
+                      checked[i] = false;
+                    }
+                  });
+                },
+              ) : IconButton(
                 icon: Icon(grid ? Icons.view_list : Icons.grid_on),
                 onPressed: () {
                   setState(() {
@@ -151,11 +170,11 @@ class _MyTasksState extends State<MyTasks> {
           ),
           trailing: edit
               ? Icon(
-            checked[i]
-                ? Icons.radio_button_checked
-                : Icons.radio_button_unchecked,
-            color: Colors.black,
-          )
+                  checked[i]
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  color: Colors.black,
+                )
               : null,
         ),
         elevation: 4,
@@ -207,10 +226,7 @@ class _MyTasksState extends State<MyTasks> {
     setState(() {
       edit = true;
       checked[i] = !checked[i];
-      if (checked[i])
-        selected.add(tasks[i]);
-      else
-        selected.remove(tasks[i]);
+      selected.add(tasks[i]);
     });
   }
 }

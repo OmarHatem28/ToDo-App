@@ -9,7 +9,12 @@ class _AddTaskState extends State<AddTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(),
+      appBar: AppBar(
+        title: Text("Add Task"),
+      ),
+      body: SingleChildScrollView(
+        
+      ),
     );
   }
 }
