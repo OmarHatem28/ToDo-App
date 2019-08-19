@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Models/task.dart';
+import 'package:todo_app/Views/addTask.dart';
 import 'package:todo_app/Views/completedTasks.dart';
 
 class MyTasks extends StatefulWidget {
@@ -147,7 +148,7 @@ class _MyTasksState extends State<MyTasks> {
       child: Container(
         margin: EdgeInsets.all(20),
         child: InkWell(
-          onTap: edit ? null : () => Navigator.pushNamed(context, 'addTask'),
+          onTap: edit ? null : () => _NavigateForResult(context),
           child: Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -201,7 +202,7 @@ class _MyTasksState extends State<MyTasks> {
       child: Container(
         padding: EdgeInsets.all(12),
         child: InkWell(
-          onTap: edit ? null : () => Navigator.pushNamed(context, 'addTask'),
+          onTap: edit ? null : () => _NavigateForResult(context),
           child: Container(
             child: Center(
               child: Padding(
@@ -233,7 +234,7 @@ class _MyTasksState extends State<MyTasks> {
               children: <Widget>[
                 Icon(Icons.keyboard_arrow_up),
                 Text(
-                  "Checkout",
+                  "Done",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white, letterSpacing: 1),
                 ),
@@ -284,5 +285,22 @@ class _MyTasksState extends State<MyTasks> {
         );
       },
     );
+  }
+
+  _NavigateForResult(BuildContext context) async {
+    final result = await Navigator.push(
+        context,
+        new MaterialPageRoute(
+          builder: (context) => AddTask(),
+        ));
+    if (result != null) {
+      setState(() {
+        Task newTask = result;
+        setState(() {
+          tasks.add(newTask);
+          checked.add(false);
+        });
+      });
+    }
   }
 }

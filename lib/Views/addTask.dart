@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/Models/task.dart';
 import 'package:todo_app/Views/days.dart';
 
 class AddTask extends StatefulWidget {
@@ -7,13 +8,15 @@ class AddTask extends StatefulWidget {
 }
 
 class _AddTaskState extends State<AddTask> {
-  final TextEditingController _textController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descController = TextEditingController();
 
-  String name, description, day, dayText = "Tab to Choose a day";
+  String name, description, day = "Tab to Choose a day";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         title: Text("Add Task"),
       ),
@@ -22,15 +25,41 @@ class _AddTaskState extends State<AddTask> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             buildFieldName("Task Name"),
-            buildField("Example: Take The Medicine", 1, "TaskName"),
+            buildField("Example: Take The Medicine", 1, "TaskName", _nameController),
             buildFieldName("Task Description"),
             buildField(
                 "I should eat before taking the medicine, and then take the medicine right away",
                 5,
-                "TaskDescription"),
+                "TaskDescription", _descController),
             buildFieldName("Task Day"),
             buildSelectDayButton(context),
           ],
+        ),
+      ),
+      bottomNavigationBar: buildBottomBar(),
+    );
+  }
+
+  Widget buildBottomBar() {
+    return Opacity(
+      opacity: name == null || description == null ? 0.2 : 1,
+      child: Container(
+        color: Colors.black,
+        child: GestureDetector(
+          child: ListTile(
+            title: Container(
+              padding: EdgeInsets.only(top: 15),
+              height: 50,
+              child: Text(
+                "Add the Task +",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, letterSpacing: 1, fontSize: 18),
+              ),
+            ),
+          ),
+          onTap: name == null || description == null ? null : () {
+            Navigator.pop(context, new Task(name, description, day, "245455"));
+          },
         ),
       ),
     );
@@ -45,7 +74,7 @@ class _AddTaskState extends State<AddTask> {
             color: Colors.white54, borderRadius: BorderRadius.circular(15)),
         child: Center(
           child: Text(
-            dayText,
+            day,
             style: TextStyle(color: Colors.black54, fontSize: 18),
           ),
         ),
@@ -63,7 +92,7 @@ class _AddTaskState extends State<AddTask> {
     );
   }
 
-  Widget buildField(String hint, int maxLines, String which) {
+  Widget buildField(String hint, int maxLines, String which, TextEditingController controller) {
     return Container(
       margin: EdgeInsets.fromLTRB(15, 0, 15, 20),
       padding: EdgeInsets.all(15),
@@ -72,8 +101,9 @@ class _AddTaskState extends State<AddTask> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        controller: _textController,
+        controller: controller,
         autofocus: false,
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration.collapsed(
             hintText: hint, hintStyle: TextStyle(color: Colors.black38)),
         maxLines: maxLines,
@@ -95,7 +125,7 @@ class _AddTaskState extends State<AddTask> {
         ));
     if (result != null) {
       setState(() {
-        dayText = result;
+        day = result;
       });
     }
   }
