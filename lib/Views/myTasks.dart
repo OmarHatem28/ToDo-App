@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Models/task.dart';
+import 'package:todo_app/Views/completedTasks.dart';
 
 class MyTasks extends StatefulWidget {
   @override
@@ -32,50 +33,55 @@ class _MyTasksState extends State<MyTasks> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size(size.width, 60),
-        child: Container(
-          color: Colors.black,
-          height: 80,
-          padding: EdgeInsets.fromLTRB(15, 35, 15, 15),
-          child: Row(
-            children: <Widget>[
-              InkWell(
-                child: Text(
-                  "My Tasks",
-                  style: TextStyle(fontSize: 16),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                },
-              ),
-              Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 15, top: 8),
-                child: Text("Sunday >"),
-              ),
-              edit ? IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  setState(() {
-                    edit = false;
-                    selected.clear();
-                    for (int i = 0; i < tasks.length; i++) {
-                      checked[i] = false;
-                    }
-                  });
-                },
-              ) : IconButton(
-                icon: Icon(grid ? Icons.view_list : Icons.grid_on),
-                onPressed: () {
-                  setState(() {
-                    grid = !grid;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
+        child: buildAppBar(),
       ),
       body: grid ? buildGridTasks() : buildLinearTasks(),
+      bottomNavigationBar: buildBottomBar(),
+    );
+  }
+
+  Widget buildAppBar() {
+    return Container(
+      color: Colors.black,
+      height: 80,
+      padding: EdgeInsets.fromLTRB(15, 35, 15, 15),
+      child: Row(
+        children: <Widget>[
+          InkWell(
+            child: Text(
+              "My Tasks",
+              style: TextStyle(fontSize: 16),
+            ),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(right: 15, top: 8),
+            child: Text("Sunday >"),
+          ),
+          edit ? IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              setState(() {
+                edit = false;
+                selected.clear();
+                for (int i = 0; i < tasks.length; i++) {
+                  checked[i] = false;
+                }
+              });
+            },
+          ) : IconButton(
+            icon: Icon(grid ? Icons.view_list : Icons.grid_on),
+            onPressed: () {
+              setState(() {
+                grid = !grid;
+              });
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -210,6 +216,32 @@ class _MyTasksState extends State<MyTasks> {
     );
   }
 
+  Widget buildBottomBar() {
+    return Container(
+      color: Colors.black,
+      child: GestureDetector(
+        child: ListTile(
+          title: Container(
+            height: 50,
+            child: Column(
+              children: <Widget>[
+                Icon(Icons.keyboard_arrow_up),
+                Text(
+                  "Checkout",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white, letterSpacing: 1),
+                ),
+              ],
+            ),
+          ),
+        ),
+        onVerticalDragStart: (details) {
+          Navigator.of(context).push(_createRoute());
+        },
+      ),
+    );
+  }
+
   void onTap(int i) {
     if (edit) {
       setState(() {
@@ -228,5 +260,23 @@ class _MyTasksState extends State<MyTasks> {
       checked[i] = !checked[i];
       selected.add(tasks[i]);
     });
+  }
+
+  Route _createRoute() {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) => CompletedTasks(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var begin = Offset(0.0, 1.0);
+        var end = Offset.zero;
+        var curve = Curves.fastOutSlowIn;
+
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+        return SlideTransition(
+          position: animation.drive(tween),
+          child: child,
+        );
+      },
+    );
   }
 }
