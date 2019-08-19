@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/Views/days.dart';
 
 class AddTask extends StatefulWidget {
   @override
@@ -8,7 +9,7 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   final TextEditingController _textController = TextEditingController();
 
-  String name, description, day;
+  String name, description, day, dayText = "Tab to Choose a day";
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,26 @@ class _AddTaskState extends State<AddTask> {
                 "I should eat before taking the medicine, and then take the medicine right away",
                 5,
                 "TaskDescription"),
+            buildFieldName("Task Day"),
+            buildSelectDayButton(context),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSelectDayButton(BuildContext context) {
+    return FlatButton(
+      onPressed: () => _NavigateForResult(context),
+      child: Container(
+        padding: EdgeInsets.all(25),
+        decoration: BoxDecoration(
+            color: Colors.white54, borderRadius: BorderRadius.circular(15)),
+        child: Center(
+          child: Text(
+            dayText,
+            style: TextStyle(color: Colors.black54, fontSize: 18),
+          ),
         ),
       ),
     );
@@ -65,5 +85,18 @@ class _AddTaskState extends State<AddTask> {
         },
       ),
     );
+  }
+
+  _NavigateForResult(BuildContext context) async {
+    final String result = await Navigator.push(
+        context,
+        new MaterialPageRoute(
+          builder: (context) => Days(),
+        ));
+    if (result != null) {
+      setState(() {
+        dayText = result;
+      });
+    }
   }
 }

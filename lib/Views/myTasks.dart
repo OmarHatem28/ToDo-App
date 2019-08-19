@@ -24,11 +24,17 @@ class _MyTasksState extends State<MyTasks> {
   bool grid = false;
 
   @override
-  Widget build(BuildContext context) {
-    if (selected.length == 0) edit = false;
+  void initState() {
+    // TODO: implement initState
+    super.initState();
     for (int i = 0; i < tasks.length; i++) {
       checked.add(false);
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (selected.length == 0) edit = false;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: PreferredSize(
