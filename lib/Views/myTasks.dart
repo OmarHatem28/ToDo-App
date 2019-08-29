@@ -68,25 +68,27 @@ class _MyTasksState extends State<MyTasks> {
             padding: const EdgeInsets.only(right: 15, top: 8),
             child: Text("Sunday >"),
           ),
-          edit ? IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              setState(() {
-                edit = false;
-                selected.clear();
-                for (int i = 0; i < tasks.length; i++) {
-                  checked[i] = false;
-                }
-              });
-            },
-          ) : IconButton(
-            icon: Icon(grid ? Icons.view_list : Icons.grid_on),
-            onPressed: () {
-              setState(() {
-                grid = !grid;
-              });
-            },
-          ),
+          edit
+              ? IconButton(
+                  icon: Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      edit = false;
+                      selected.clear();
+                      for (int i = 0; i < tasks.length; i++) {
+                        checked[i] = false;
+                      }
+                    });
+                  },
+                )
+              : IconButton(
+                  icon: Icon(grid ? Icons.view_list : Icons.grid_on),
+                  onPressed: () {
+                    setState(() {
+                      grid = !grid;
+                    });
+                  },
+                ),
         ],
       ),
     );
@@ -225,27 +227,71 @@ class _MyTasksState extends State<MyTasks> {
 
   Widget buildBottomBar() {
     return Container(
+      height: 50,
       color: Colors.black,
       child: GestureDetector(
-        child: ListTile(
-          title: Container(
-            height: 50,
-            child: Column(
-              children: <Widget>[
-                Icon(Icons.keyboard_arrow_up),
-                Text(
-                  "Done",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, letterSpacing: 1),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            if (edit && selected.length == 1) buildEdit(),
+            if (edit && selected.length == 1)
+              Container(
+                height: 30,
+                child: VerticalDivider(
+                  color: Colors.grey,
                 ),
-              ],
-            ),
-          ),
+              ),
+            edit ? buildDelete() : buildDone(),
+          ],
         ),
         onVerticalDragStart: (details) {
-          Navigator.of(context).push(_createRoute());
+          if (!edit) Navigator.of(context).push(_createRoute());
         },
       ),
+    );
+  }
+
+  Widget buildDone() {
+    return Column(
+      children: <Widget>[
+        Icon(Icons.keyboard_arrow_up),
+        Text(
+          "Done",
+          textAlign: TextAlign.center,
+          style: TextStyle(color: Colors.white, letterSpacing: 1),
+        ),
+      ],
+    );
+  }
+
+  Widget buildEdit() {
+    return FlatButton(
+      child: Container(
+        child: Text("Edit"),
+      ),
+      onPressed: () {
+        print("Hi");
+      },
+    );
+  }
+
+  Widget buildDelete() {
+    return FlatButton(
+      child: Container(
+        child: Text("Delete"),
+      ),
+      onPressed: () {
+        setState(() {
+          for (int i = 0; i < selected.length; i++) {
+            checked.removeLast();
+            tasks.remove(selected[i]);
+          }
+          for (int i = 0; i < checked.length; i++) {
+            checked[i] = false;
+          }
+          selected.clear();
+        });
+      },
     );
   }
 
@@ -277,7 +323,8 @@ class _MyTasksState extends State<MyTasks> {
         var end = Offset.zero;
         var curve = Curves.fastOutSlowIn;
 
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
         return SlideTransition(
           position: animation.drive(tween),
