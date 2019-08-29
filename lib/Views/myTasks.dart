@@ -3,19 +3,14 @@ import 'package:todo_app/Models/task.dart';
 import 'package:todo_app/Views/addTask.dart';
 import 'package:todo_app/Views/completedTasks.dart';
 
+import '../main.dart';
+
 class MyTasks extends StatefulWidget {
   @override
   _MyTasksState createState() => _MyTasksState();
 }
 
 class _MyTasksState extends State<MyTasks> {
-  List<Task> tasks = [
-    new Task("Feed the Cat", "No description needed", "Sunday", "234234"),
-    new Task("Buy Pepsi", "No description needed", "Sunday", "234234"),
-    new Task("Pay internet Bill", "No description needed", "Sunday", "234234"),
-    new Task("Call Uncle Harry", "No description needed", "Sunday", "234234"),
-    new Task("Wash your Clothes", "No description needed", "Sunday", "234234"),
-  ];
 
   List<Task> selected = new List();
 
@@ -120,26 +115,34 @@ class _MyTasksState extends State<MyTasks> {
       margin: EdgeInsets.only(left: 20, right: 20, top: 20),
       decoration: BoxDecoration(
           color: Colors.white54, borderRadius: BorderRadius.circular(8)),
-      child: ListTile(
-        contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-        title: Text(
-          tasks[i].name,
-          style: TextStyle(color: Colors.black, fontSize: 18),
+      child: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          setState(() {
+            completed.add(tasks[i]);
+            tasks.removeAt(i);
+          });
+        },
+        child: ListTile(
+          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+          title: Text(
+            tasks[i].name,
+            style: TextStyle(color: Colors.black, fontSize: 18),
+          ),
+          trailing: edit
+              ? Icon(
+                  checked[i]
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  color: Colors.black,
+                )
+              : null,
+          onTap: () {
+            onTap(i);
+          },
+          onLongPress: () {
+            onLongPress(i);
+          },
         ),
-        trailing: edit
-            ? Icon(
-                checked[i]
-                    ? Icons.radio_button_checked
-                    : Icons.radio_button_unchecked,
-                color: Colors.black,
-              )
-            : null,
-        onTap: () {
-          onTap(i);
-        },
-        onLongPress: () {
-          onLongPress(i);
-        },
       ),
     );
   }

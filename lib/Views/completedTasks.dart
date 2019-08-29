@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Models/task.dart';
+import '../main.dart';
 
-class CompletedTasks extends StatelessWidget {
+class CompletedTasks extends StatefulWidget {
+  @override
+  _CompletedTasksState createState() => _CompletedTasksState();
+}
 
-  List<Task> completed = [
-    new Task("Feed the Cat", "No description needed", "Sunday", "234234"),
-    new Task("Buy Pepsi", "No description needed", "Sunday", "234234"),
-    new Task("Pay internet Bill", "No description needed", "Sunday", "234234"),
-    new Task("Call Uncle Harry", "No description needed", "Sunday", "234234"),
-    new Task("Wash your Clothes", "No description needed", "Sunday", "234234"),
-  ];
-
+class _CompletedTasksState extends State<CompletedTasks> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,11 +19,19 @@ class CompletedTasks extends StatelessWidget {
             margin: EdgeInsets.only(left: 20, right: 20, top: 20),
             decoration: BoxDecoration(
                 color: Colors.white54, borderRadius: BorderRadius.circular(8)),
-            child: ListTile(
-              contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              title: Text(
-                completed[i].name,
-                style: TextStyle(color: Colors.black, fontSize: 18, decoration: TextDecoration.lineThrough),
+            child: GestureDetector(
+              onHorizontalDragEnd: (details) {
+                setState(() {
+                  tasks.add(completed[i]);
+                  completed.removeAt(i);
+                });
+              },
+              child: ListTile(
+                contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                title: Text(
+                  completed[i].name,
+                  style: TextStyle(color: Colors.black, fontSize: 18, decoration: TextDecoration.lineThrough),
+                ),
               ),
             ),
           );
